@@ -8,27 +8,50 @@ connect.then((db) => {
 
     console.log("connected to the database");
 
-    var newDish = Dishes({
-        name:"uthapizza",
-        description:"uthappam+pizza"
-    });
+    // var newDish = Dishes({
+    //     name:"uthapizza",
+    //     description:"uthappam+pizza"
+    // });
 
-    newDish.save()
+    // newDish.save()
+    Dishes.create({
+        name:"uthappizza",
+        description:"uthappam + pizza"
+    })
     .then((dish) => {
         console.log(dish);
 
-        return Dishes.find({});
+        return Dishes.findByIdAndUpdate(dish._id,{
+            $set: {description:"updated description"}
+        },
+        {
+            new:true
+        })
+        .exec();
     })
     .then((dishes) => {
 
         console.log(dishes);
 
+        dishes.comments.push({
+            rating:4,
+            comment:"good",
+            author:"aashishp"
+        });
+
+        return dishes.save();
+    })
+    .then((dish) => {
+        console.log(dish);
+
         return Dishes.remove({});
     })
     .then((result) => {
 
-        console.log(result)
+        console.log(result);
+
         return mongoose.connection.close();
     })
     .catch((err) => console.log(err));
-});
+})
+.catch((err) => console.log(err));
